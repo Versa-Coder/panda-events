@@ -1,0 +1,23 @@
+{
+  "name": "pandaevents",
+  "version": "1.0.0",
+  "description": "An customized event listener on browser or in Node js environment",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Versa-Coder/PandaEvents.git"
+  },
+  "keywords": [
+    "events"
+  ],
+  "author": "VersaCoder",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Versa-Coder/PandaEvents/issues"
+  },
+  "homepage": "https://github.com/Versa-Coder/PandaEvents#readme"
+}
