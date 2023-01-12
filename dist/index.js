@@ -62,11 +62,11 @@ const pandaEvents = function (options = {}) {
             errEventName = name;
         },
         /**
-         * Register event and the listener, the listener will be executed
+         * Register listener for an event, the listener will be executed only one time for emitting the event and will get removed
          *
          * @param eventName
          * @param callBack
-         * @returns
+         * @returns (String) Event Id
          */
         once(eventName, callBack) {
             let id = execOnAndOnce(eventName, callBack, true);
@@ -74,10 +74,11 @@ const pandaEvents = function (options = {}) {
             return id;
         },
         /**
+         * Register listener for an event, the listener will be executed whenever the event is emitted
          *
          * @param eventName
          * @param callBack
-         * @returns
+         * @returns (String) Event Id
          */
         on(eventName, callBack) {
             let id = execOnAndOnce(eventName, callBack, false);
@@ -85,6 +86,7 @@ const pandaEvents = function (options = {}) {
             return id;
         },
         /**
+         * Trigger an event that was registered through the 'on' or 'once' method, corresponding listeners will get executed with provided arguments
          *
          * @param eventName
          * @param args
@@ -119,6 +121,7 @@ const pandaEvents = function (options = {}) {
             }
         },
         /**
+         * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
          *
          * @param listenerID
          * @returns
@@ -127,8 +130,9 @@ const pandaEvents = function (options = {}) {
             return this.removeAllListenersById(listenerID);
         },
         /**
+         * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
          *
-         * @param listenerID
+         * @param Array listenerID or Array of Listener Ids
          */
         removeAllListenersById(listenerID) {
             let ids = Array.isArray(listenerID) ? listenerID : [listenerID];
@@ -146,6 +150,7 @@ const pandaEvents = function (options = {}) {
             });
         },
         /**
+         * Removes all listeners for a specified event
          *
          * @param eventName
          * @param listener
@@ -155,6 +160,7 @@ const pandaEvents = function (options = {}) {
             return this.removeEventListener(eventName, listener);
         },
         /**
+         * Removes all listeners for a specified event
          *
          * @param eventName
          * @param listener
@@ -167,6 +173,7 @@ const pandaEvents = function (options = {}) {
             }
         },
         /**
+         * Removes all the listeners for given event
          *
          * @param eventName
          */
