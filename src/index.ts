@@ -1,4 +1,4 @@
-type EventName = string;
+type EventName = string | "newListener" | "error";
 type ListenerID = string;
 type EventListenersMap = { [name: string]: number[] };
 type EventOptions = { global?: boolean };
@@ -42,7 +42,7 @@ const pandaEvents = function (options: EventOptions = {}) {
    * @returns (String) Event Id
    */
   const execOnAndOnce = function (
-    eventName: string,
+    eventName: EventName,
     callBack: Function,
     once: boolean = false
   ): ListenerID {
@@ -82,7 +82,7 @@ const pandaEvents = function (options: EventOptions = {}) {
      * @param callBack
      * @returns (String) Event Id
      */
-    once(eventName: string, callBack: Function): ListenerID {
+    once(eventName: EventName, callBack: Function): ListenerID {
       let id = execOnAndOnce(eventName, callBack, true);
       this.emit("newListener", eventName, callBack);
       return id;
@@ -95,7 +95,7 @@ const pandaEvents = function (options: EventOptions = {}) {
      * @param callBack
      * @returns (String) Event Id
      */
-    on(eventName: string, callBack: Function): ListenerID {
+    on(eventName: EventName, callBack: Function): ListenerID {
       let id = execOnAndOnce(eventName, callBack, false);
       this.emit("newListener", eventName, callBack);
       return id;
