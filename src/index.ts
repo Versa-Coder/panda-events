@@ -17,23 +17,51 @@ const globalListenStorage: GlobalListenStorage = {
 /**
  * Returns the event listener object
  *
- * @param options (Object| Optional) An optional object for additional configuration. For example {global: true}, it will use the global event storage which is helpful for multi component apps to emit and listen events from different component.
+ * @param options (Object| Optional) An optional object for additional configuration. For example <strong>{global: true}</strong>, it will use the global event storage which is helpful for multi component apps to emit and listen events from different component.
  * @returns (Object) Event listener
  */
-const pandaEvents = function (options: EventOptions = {}) {
-  const useGlobals = options.global ? true : false;
+export class PandaEvents {
+  #useGlobals: boolean = false;
+  #listeners: (Function | null)[] = [];
+  #eventListenersMap: EventListenersMap = {};
+  #onceMap: number[] = [];
 
-  const listeners: (Function | null)[] = useGlobals
-    ? globalListenStorage.listeners
-    : [];
-  const eventListenersMap: EventListenersMap = useGlobals
-    ? globalListenStorage.eventListenersMap
-    : {};
-  const onceMap: number[] = useGlobals ? globalListenStorage.onceMap : [];
+  #errEventName: string = "error";
+  #newListenerEventName: string = "newListener";
+  #removeListenerEventName: string = "removeListener";
 
-  let errEventName = "error";
-  let newListenerEventName = "newListener";
-  let removeListenerEventName = "removeListener";
+  constructor(options: EventOptions = {}) {
+    this.#useGlobals = options.global ? true : false;
+
+    this.#listeners = this.#useGlobals ? globalListenStorage.listeners : [];
+
+    this.#eventListenersMap = this.#useGlobals
+      ? globalListenStorage.eventListenersMap
+      : {};
+
+    this.#onceMap = this.#useGlobals ? globalListenStorage.onceMap : [];
+  }
+
+  /**
+   * Modify error event name
+   */
+  set errorEventName(name: string) {
+    this.#errEventName = name;
+  }
+
+  /**
+   * Modify event name for new listener
+   */
+  set newListenerEventName(name: string) {
+    this.#newListenerEventName = name;
+  }
+
+  /**
+   * Modify event name for removal of a listener
+   */
+  set removeListenerEventName(name: string) {
+    this.#removeListenerEventName = name;
+  }
 
   /**
    * Stores the events and the listeners also determines whether the method will be called once
@@ -43,7 +71,7 @@ const pandaEvents = function (options: EventOptions = {}) {
    * @param once (Boolean | Optional) Default false, it determines whether the method will be called once
    * @returns (String) Event Id
    */
-  const execOnAndOnce = function (
+  #execOnAndOnce(
     eventName: EventName,
     callBack: Function,
     once: boolean = false
@@ -58,173 +86,164 @@ const pandaEvents = function (options: EventOptions = {}) {
       );
     }
 
-    let cbs = eventListenersMap[eventName] ?? [];
-    let length = listeners.push(callBack);
+    let cbs = this.#eventListenersMap[eventName] ?? [];
+    let length = this.#listeners.push(callBack);
     let listenerID = length - 1;
     cbs.push(listenerID);
-    eventListenersMap[eventName] = cbs;
+    this.#eventListenersMap[eventName] = cbs;
 
     let evtListener = `${listenerID}@${eventName}`;
 
     if (once) {
-      onceMap.push(listenerID);
+      this.#onceMap.push(listenerID);
     }
     return evtListener;
-  };
+  }
 
-  return {
-    set errorEventName(name: string) {
-      errEventName = name;
-    },
+  /**
+   * Register listener for an event, the listener will be executed only one time for emitting the event and will get removed
+   *
+   * @param eventName
+   * @param callBack
+   * @returns (String) Event Id
+   */
+  once(eventName: EventName, callBack: Function): ListenerID {
+    let id = this.#execOnAndOnce(eventName, callBack, true);
+    if (![this.#newListenerEventName, this.#errEventName].includes(eventName)) {
+      this.emit("newListener", eventName, callBack);
+    }
+    return id;
+  }
 
-    set newListenerEventName(name: string) {
-      newListenerEventName = name;
-    },
+  /**
+   * Register listener for an event, the listener will be executed whenever the event is emitted
+   *
+   * @param eventName
+   * @param callBack
+   * @returns (String) Event Id
+   */
+  on(eventName: EventName, callBack: Function): ListenerID {
+    let id = this.#execOnAndOnce(eventName, callBack, false);
+    if (![this.#newListenerEventName, this.#errEventName].includes(eventName)) {
+      this.emit("newListener", eventName, callBack);
+    }
+    return id;
+  }
 
-    set removeListenerEventName(name: string) {
-      removeListenerEventName = name;
-    },
+  /**
+   * Trigger an event that was registered through the 'on' or 'once' method, corresponding listeners will get executed with provided arguments
+   *
+   * @param eventName
+   * @param args
+   */
+  emit(eventName: string, ...args: unknown[]): void {
+    let evIds = this.#eventListenersMap[eventName];
+    if (evIds && Array.isArray(evIds)) {
+      let onceArr: ListenerID[] = [];
+      evIds.forEach((ev) => {
+        let fn = this.#listeners[ev] as Function;
+        if (this.#onceMap.includes(ev)) {
+          onceArr.push(`${ev}@${eventName}`);
+        }
 
-    /**
-     * Register listener for an event, the listener will be executed only one time for emitting the event and will get removed
-     *
-     * @param eventName
-     * @param callBack
-     * @returns (String) Event Id
-     */
-    once(eventName: EventName, callBack: Function): ListenerID {
-      let id = execOnAndOnce(eventName, callBack, true);
-      if (![newListenerEventName, errEventName].includes(eventName)) {
-        this.emit("newListener", eventName, callBack);
-      }
-      return id;
-    },
-
-    /**
-     * Register listener for an event, the listener will be executed whenever the event is emitted
-     *
-     * @param eventName
-     * @param callBack
-     * @returns (String) Event Id
-     */
-    on(eventName: EventName, callBack: Function): ListenerID {
-      let id = execOnAndOnce(eventName, callBack, false);
-      if (![newListenerEventName, errEventName].includes(eventName)) {
-        this.emit("newListener", eventName, callBack);
-      }
-      return id;
-    },
-
-    /**
-     * Trigger an event that was registered through the 'on' or 'once' method, corresponding listeners will get executed with provided arguments
-     *
-     * @param eventName
-     * @param args
-     */
-    emit(eventName: string, ...args: unknown[]): void {
-      let evIds = eventListenersMap[eventName];
-      if (evIds && Array.isArray(evIds)) {
-        let onceArr: ListenerID[] = [];
-        evIds.forEach((ev) => {
-          let fn = listeners[ev] as Function;
-          if (onceMap.includes(ev)) {
-            onceArr.push(`${ev}@${eventName}`);
-          }
-
-          if (typeof fn === "function") {
-            setTimeout(async () => {
-              try {
-                await fn(...args);
-              } catch (err) {
-                let errListeners = eventListenersMap[errEventName];
-                if (Array.isArray(errListeners) && errListeners.length > 0) {
-                  this.emit(errEventName, err, eventName);
-                } else {
-                  throw err;
-                }
+        if (typeof fn === "function") {
+          setTimeout(async () => {
+            try {
+              await fn(...args);
+            } catch (err) {
+              let errListeners = this.#eventListenersMap[this.#errEventName];
+              if (Array.isArray(errListeners) && errListeners.length > 0) {
+                this.emit(this.#errEventName, err, eventName);
+              } else {
+                throw err;
               }
-            });
-          }
-        });
-        this.removeAllListenersById(onceArr);
-      }
-    },
-
-    /**
-     * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
-     *
-     * @param listenerID
-     * @returns
-     */
-    removeListenerById(listenerID: ListenerID) {
-      return this.removeAllListenersById(listenerID);
-    },
-
-    /**
-     * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
-     *
-     * @param Array listenerID or Array of Listener Ids
-     */
-    removeAllListenersById(listenerID: ListenerID | ListenerID[]) {
-      let ids = Array.isArray(listenerID) ? listenerID : [listenerID];
-      ids.forEach((id) => {
-        const [listenerIndexStr, ...eventNameArr] = id.split("@");
-        const listenerIndex = Number(listenerIndexStr);
-        const eventName = eventNameArr.join("@");
-
-        Array.isArray(eventListenersMap[eventName]) &&
-          eventListenersMap[eventName].length > 0 &&
-          eventListenersMap[eventName].includes(listenerIndex) &&
-          eventListenersMap[eventName].splice(
-            eventListenersMap[eventName].indexOf(listenerIndex),
-            1
-          );
-
-        listeners[listenerIndex] && (listeners[listenerIndex] = null);
-
-        onceMap.includes(listenerIndex) &&
-          onceMap.splice(onceMap.indexOf(listenerIndex), 1);
+            }
+          });
+        }
       });
-    },
+      this.removeAllListenersById(onceArr);
+    }
+  }
 
-    /**
-     * Removes all listeners for a specified event
-     *
-     * @param eventName
-     * @param listener
-     * @returns
-     */
-    off(eventName: EventName, listener: Function) {
-      return this.removeEventListener(eventName, listener);
-    },
+  /**
+   * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
+   *
+   * @param listenerID
+   * @returns
+   */
+  removeListenerById(listenerID: ListenerID) {
+    return this.removeAllListenersById(listenerID);
+  }
 
-    /**
-     * Removes all listeners for a specified event
-     *
-     * @param eventName
-     * @param listener
-     */
-    removeEventListener(eventName: EventName, listener: Function) {
-      const index = listeners.indexOf(listener);
-      if (index !== -1) {
-        let evtName = `${index}@${eventName}`;
-        this.removeListenerById(evtName);
-      }
-    },
+  /**
+   * Remove a listener by the event Id (Which was returned through the 'on' or 'once' method during the registration of the listener)
+   *
+   * @param Array listenerID or Array of Listener Ids
+   */
+  removeAllListenersById(listenerID: ListenerID | ListenerID[]) {
+    let ids = Array.isArray(listenerID) ? listenerID : [listenerID];
+    ids.forEach((id) => {
+      const [listenerIndexStr, ...eventNameArr] = id.split("@");
+      const listenerIndex = Number(listenerIndexStr);
+      const eventName = eventNameArr.join("@");
 
-    /**
-     * Removes all the listeners for given event
-     *
-     * @param eventName
-     */
-    removeAllEventListeners(eventName: string): void {
-      let evtIds = eventListenersMap[eventName];
-      if (evtIds && Array.isArray(evtIds)) {
-        let handlers = evtIds.map((id) => `${id}@${eventName}`);
-        this.removeAllListenersById(handlers);
-      }
-    },
-  };
-};
+      Array.isArray(this.#eventListenersMap[eventName]) &&
+        this.#eventListenersMap[eventName].length > 0 &&
+        this.#eventListenersMap[eventName].includes(listenerIndex) &&
+        this.#eventListenersMap[eventName].splice(
+          this.#eventListenersMap[eventName].indexOf(listenerIndex),
+          1
+        );
 
-export default pandaEvents;
+      this.#listeners[listenerIndex] && (this.#listeners[listenerIndex] = null);
+
+      this.#onceMap.includes(listenerIndex) &&
+        this.#onceMap.splice(this.#onceMap.indexOf(listenerIndex), 1);
+    });
+  }
+
+  /**
+   * Removes all listeners for a specified event
+   *
+   * @param eventName
+   * @param listener
+   * @returns
+   */
+  off(eventName: EventName, listener: Function) {
+    return this.removeEventListener(eventName, listener);
+  }
+
+  /**
+   * Removes all listeners for a specified event
+   *
+   * @param eventName
+   * @param listener
+   */
+  removeEventListener(eventName: EventName, listener: Function) {
+    const index = this.#listeners.indexOf(listener);
+    if (index !== -1) {
+      let evtName = `${index}@${eventName}`;
+      this.removeListenerById(evtName);
+    }
+  }
+
+  /**
+   * Removes all the listeners for given event
+   *
+   * @param eventName
+   */
+  removeAllEventListeners(eventName: string): void {
+    let evtIds = this.#eventListenersMap[eventName];
+    if (evtIds && Array.isArray(evtIds)) {
+      let handlers = evtIds.map((id) => `${id}@${eventName}`);
+      this.removeAllListenersById(handlers);
+    }
+  }
+}
+
+export function pandaEvents(options: EventOptions = {}): PandaEvents {
+  return new PandaEvents(options);
+}
+
+const events = { PandaEvents, pandaEvents };
+export default events;
