@@ -30,6 +30,8 @@ const pandaEvents = function (options = {}) {
         : {};
     const onceMap = useGlobals ? globalListenStorage.onceMap : [];
     let errEventName = "error";
+    let newListenerEventName = "newListener";
+    let removeListenerEventName = "removeListener";
     /**
      * Stores the events and the listeners also determines whether the method will be called once
      *
@@ -61,6 +63,12 @@ const pandaEvents = function (options = {}) {
         set errorEventName(name) {
             errEventName = name;
         },
+        set newListenerEventName(name) {
+            newListenerEventName = name;
+        },
+        set removeListenerEventName(name) {
+            removeListenerEventName = name;
+        },
         /**
          * Register listener for an event, the listener will be executed only one time for emitting the event and will get removed
          *
@@ -70,7 +78,9 @@ const pandaEvents = function (options = {}) {
          */
         once(eventName, callBack) {
             let id = execOnAndOnce(eventName, callBack, true);
-            this.emit("newListener", eventName, callBack);
+            if (![newListenerEventName, errEventName].includes(eventName)) {
+                this.emit("newListener", eventName, callBack);
+            }
             return id;
         },
         /**
@@ -82,7 +92,9 @@ const pandaEvents = function (options = {}) {
          */
         on(eventName, callBack) {
             let id = execOnAndOnce(eventName, callBack, false);
-            this.emit("newListener", eventName, callBack);
+            if (![newListenerEventName, errEventName].includes(eventName)) {
+                this.emit("newListener", eventName, callBack);
+            }
             return id;
         },
         /**
@@ -108,7 +120,7 @@ const pandaEvents = function (options = {}) {
                             catch (err) {
                                 let errListeners = eventListenersMap[errEventName];
                                 if (Array.isArray(errListeners) && errListeners.length > 0) {
-                                    this.emit(errEventName, err);
+                                    this.emit(errEventName, err, eventName);
                                 }
                                 else {
                                     throw err;

@@ -32,6 +32,8 @@ const pandaEvents = function (options: EventOptions = {}) {
   const onceMap: number[] = useGlobals ? globalListenStorage.onceMap : [];
 
   let errEventName = "error";
+  let newListenerEventName = "newListener";
+  let removeListenerEventName = "removeListener";
 
   /**
    * Stores the events and the listeners also determines whether the method will be called once
@@ -75,6 +77,14 @@ const pandaEvents = function (options: EventOptions = {}) {
       errEventName = name;
     },
 
+    set newListenerEventName(name: string) {
+      newListenerEventName = name;
+    },
+
+    set removeListenerEventName(name: string) {
+      removeListenerEventName = name;
+    },
+
     /**
      * Register listener for an event, the listener will be executed only one time for emitting the event and will get removed
      *
@@ -84,7 +94,9 @@ const pandaEvents = function (options: EventOptions = {}) {
      */
     once(eventName: EventName, callBack: Function): ListenerID {
       let id = execOnAndOnce(eventName, callBack, true);
-      this.emit("newListener", eventName, callBack);
+      if (![newListenerEventName, errEventName].includes(eventName)) {
+        this.emit("newListener", eventName, callBack);
+      }
       return id;
     },
 
@@ -97,7 +109,9 @@ const pandaEvents = function (options: EventOptions = {}) {
      */
     on(eventName: EventName, callBack: Function): ListenerID {
       let id = execOnAndOnce(eventName, callBack, false);
-      this.emit("newListener", eventName, callBack);
+      if (![newListenerEventName, errEventName].includes(eventName)) {
+        this.emit("newListener", eventName, callBack);
+      }
       return id;
     },
 
@@ -124,7 +138,7 @@ const pandaEvents = function (options: EventOptions = {}) {
               } catch (err) {
                 let errListeners = eventListenersMap[errEventName];
                 if (Array.isArray(errListeners) && errListeners.length > 0) {
-                  this.emit(errEventName, err);
+                  this.emit(errEventName, err, eventName);
                 } else {
                   throw err;
                 }
