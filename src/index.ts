@@ -97,6 +97,16 @@ export class PandaEvents {
     if (once) {
       this.#onceMap.push(listenerID);
     }
+
+    if (
+      ![
+        this.#newListenerEventName,
+        this.#errEventName,
+        this.#removeListenerEventName,
+      ].includes(eventName)
+    ) {
+      this.emit("newListener", eventName, callBack);
+    }
     return evtListener;
   }
 
@@ -109,9 +119,6 @@ export class PandaEvents {
    */
   once(eventName: EventName, callBack: Function): ListenerID {
     let id = this.#execOnAndOnce(eventName, callBack, true);
-    if (![this.#newListenerEventName, this.#errEventName].includes(eventName)) {
-      this.emit("newListener", eventName, callBack);
-    }
     return id;
   }
 
@@ -124,9 +131,6 @@ export class PandaEvents {
    */
   on(eventName: EventName, callBack: Function): ListenerID {
     let id = this.#execOnAndOnce(eventName, callBack, false);
-    if (![this.#newListenerEventName, this.#errEventName].includes(eventName)) {
-      this.emit("newListener", eventName, callBack);
-    }
     return id;
   }
 
@@ -195,10 +199,19 @@ export class PandaEvents {
           1
         );
 
-      this.#listeners[listenerIndex] && (this.#listeners[listenerIndex] = null);
+      let removedListener: null | Function = null;
+
+      if (this.#listeners[listenerIndex]) {
+        removedListener = this.#listeners[listenerIndex];
+        this.#listeners[listenerIndex] = null;
+      }
 
       this.#onceMap.includes(listenerIndex) &&
         this.#onceMap.splice(this.#onceMap.indexOf(listenerIndex), 1);
+
+      if (removedListener) {
+        this.emit(this.#removeListenerEventName, eventName, removedListener);
+      }
     });
   }
 

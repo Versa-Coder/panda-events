@@ -77,9 +77,6 @@ class PandaEvents {
      */
     once(eventName, callBack) {
         let id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, true);
-        if (![__classPrivateFieldGet(this, _PandaEvents_newListenerEventName, "f"), __classPrivateFieldGet(this, _PandaEvents_errEventName, "f")].includes(eventName)) {
-            this.emit("newListener", eventName, callBack);
-        }
         return id;
     }
     /**
@@ -91,9 +88,6 @@ class PandaEvents {
      */
     on(eventName, callBack) {
         let id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, false);
-        if (![__classPrivateFieldGet(this, _PandaEvents_newListenerEventName, "f"), __classPrivateFieldGet(this, _PandaEvents_errEventName, "f")].includes(eventName)) {
-            this.emit("newListener", eventName, callBack);
-        }
         return id;
     }
     /**
@@ -155,9 +149,16 @@ class PandaEvents {
                 __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName].length > 0 &&
                 __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName].includes(listenerIndex) &&
                 __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName].splice(__classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName].indexOf(listenerIndex), 1);
-            __classPrivateFieldGet(this, _PandaEvents_listeners, "f")[listenerIndex] && (__classPrivateFieldGet(this, _PandaEvents_listeners, "f")[listenerIndex] = null);
+            let removedListener = null;
+            if (__classPrivateFieldGet(this, _PandaEvents_listeners, "f")[listenerIndex]) {
+                removedListener = __classPrivateFieldGet(this, _PandaEvents_listeners, "f")[listenerIndex];
+                __classPrivateFieldGet(this, _PandaEvents_listeners, "f")[listenerIndex] = null;
+            }
             __classPrivateFieldGet(this, _PandaEvents_onceMap, "f").includes(listenerIndex) &&
                 __classPrivateFieldGet(this, _PandaEvents_onceMap, "f").splice(__classPrivateFieldGet(this, _PandaEvents_onceMap, "f").indexOf(listenerIndex), 1);
+            if (removedListener) {
+                this.emit(__classPrivateFieldGet(this, _PandaEvents_removeListenerEventName, "f"), eventName, removedListener);
+            }
         });
     }
     /**
@@ -213,6 +214,13 @@ _PandaEvents_useGlobals = new WeakMap(), _PandaEvents_listeners = new WeakMap(),
     let evtListener = `${listenerID}@${eventName}`;
     if (once) {
         __classPrivateFieldGet(this, _PandaEvents_onceMap, "f").push(listenerID);
+    }
+    if (![
+        __classPrivateFieldGet(this, _PandaEvents_newListenerEventName, "f"),
+        __classPrivateFieldGet(this, _PandaEvents_errEventName, "f"),
+        __classPrivateFieldGet(this, _PandaEvents_removeListenerEventName, "f"),
+    ].includes(eventName)) {
+        this.emit("newListener", eventName, callBack);
     }
     return evtListener;
 };
