@@ -8,7 +8,7 @@ type GlobalListenStorage = {
   onceMap: number[];
 };
 
-const globalListenStorage: GlobalListenStorage = {
+export var globalListenStorage: GlobalListenStorage = {
   listeners: [],
   eventListenersMap: {},
   onceMap: [],

@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,9 +19,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _PandaEvents_instances, _PandaEvents_useGlobals, _PandaEvents_listeners, _PandaEvents_eventListenersMap, _PandaEvents_onceMap, _PandaEvents_errEventName, _PandaEvents_newListenerEventName, _PandaEvents_removeListenerEventName, _PandaEvents_execOnAndOnce;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.pandaEvents = exports.PandaEvents = void 0;
-const globalListenStorage = {
+export var globalListenStorage = {
     listeners: [],
     eventListenersMap: {},
     onceMap: [],
@@ -33,7 +30,7 @@ const globalListenStorage = {
  * @param options (Object| Optional) An optional object for additional configuration. For example <strong>{global: true}</strong>, it will use the global event storage which is helpful for multi component apps to emit and listen events from different component.
  * @returns (Object) Event listener
  */
-class PandaEvents {
+export class PandaEvents {
     constructor(options = {}) {
         _PandaEvents_instances.add(this);
         _PandaEvents_useGlobals.set(this, false);
@@ -197,7 +194,6 @@ class PandaEvents {
         }
     }
 }
-exports.PandaEvents = PandaEvents;
 _PandaEvents_useGlobals = new WeakMap(), _PandaEvents_listeners = new WeakMap(), _PandaEvents_eventListenersMap = new WeakMap(), _PandaEvents_onceMap = new WeakMap(), _PandaEvents_errEventName = new WeakMap(), _PandaEvents_newListenerEventName = new WeakMap(), _PandaEvents_removeListenerEventName = new WeakMap(), _PandaEvents_instances = new WeakSet(), _PandaEvents_execOnAndOnce = function _PandaEvents_execOnAndOnce(eventName, callBack, once = false) {
     var _a;
     if (typeof eventName !== "string") {
@@ -224,9 +220,8 @@ _PandaEvents_useGlobals = new WeakMap(), _PandaEvents_listeners = new WeakMap(),
     }
     return evtListener;
 };
-function pandaEvents(options = {}) {
+export function pandaEvents(options = {}) {
     return new PandaEvents(options);
 }
-exports.pandaEvents = pandaEvents;
 const events = { PandaEvents, pandaEvents };
-exports.default = events;
+export default events;
