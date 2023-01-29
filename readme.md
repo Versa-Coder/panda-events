@@ -33,6 +33,32 @@ The PandaEvents library exports three items: the method **pandaEvents**, the cla
 Let's see how we can use them programatically.
 
 ```
+//Imporing the pandaEvents method
 import {pandaEvents} from "[package]";
+
+//Getting instance of the emitter
 const e= pandaEvents();
+```
+
+Or
+
+```
+//Importing the PandaEvents class
+import {PandaEvents} from "[package]";
+
+//Creating instance
+const e= new PandaEvents();
+```
+
+Or
+
+```
+//Imporing the default exported object which contains both the method and the class
+import events from "[package]"
+
+//we either call the method in the way written below
+const e= evants.pandaEvents();
+
+//or, we can create instance of the class
+const e1= new evants.PandaEvents();
 ```
