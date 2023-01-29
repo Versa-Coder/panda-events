@@ -30,7 +30,7 @@ export class PandaEvents {
   #newListenerEventName: string = "newListener";
   #removeListenerEventName: string = "removeListener";
 
-  constructor(options: EventOptions = {}) {
+  constructor(options: EventOptions = { global: true }) {
     this.#useGlobals = options.global ? true : false;
 
     this.#listeners = this.#useGlobals ? globalListenStorage.listeners : [];
