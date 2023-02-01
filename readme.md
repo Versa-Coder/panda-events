@@ -83,7 +83,17 @@ Note that, each time you register an listener, it gives an **Listener Id** which
 e.on(event, listener)
 
 ** We mentioned that once you registers a listener, it will give you an Listener ID.
-So, you can surely assign that into a variable as it's written below.
+** So, you can surely assign that into a variable as it's written below.
 
 const listenerId= e.on(event, listener)
+```
+
+#### Emitting an event
+
+The `emit()` method is used to trigger an event by providing an event name which is registered and any necessary arguments, `emit()`activates any listeners or callbacks that have been registered for that event. These listeners will then receive the arguments passed through`emit()`, allowing them to perform the desired action.
+
+**Syntax**
+
+```
+e.emit(event, arg1, arg2, ...);
 ```
