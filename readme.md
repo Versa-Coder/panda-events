@@ -82,7 +82,8 @@ Note that, each time you register an listener, it gives an **Listener Id** which
 ```
 e.on(event, listener)
 
-** We mentioned that once you registers a listener, it will give you an Listener ID, so you can surely assign that into a variable as it's written below.
+** We mentioned that once you registers a listener, it will give you an Listener ID.
+So, you can surely assign that into a variable as it's written below.
 
 const listenerId= e.on(event, listener)
 ```
