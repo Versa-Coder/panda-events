@@ -1,8 +1,16 @@
 ## PandaEvents
 
-PandaEvents is a powerful lite weight JavaScript library for building event-driven applications, handling asynchronous operations, and customizing events and listeners in an elegant way. The library is specially designned for browser based applications although this is eqally powerful for Node.JS applications.
+PandaEvents is a versatile and lightweight JavaScript library which is also compatible with TypeScript that simplifies the process of building event-driven applications. It provides a comprehensive set of tools for handling asynchronous operations, creating custom events and listeners, and managing complex event flows. This library is specially designed for browser-based applications, but it can also be used in Node.js environments to enhance the event management of your application. With its intuitive API, PandaEvents makes it easy to create and manage events, allowing developers to focus on building the core functionality of their applications. Whether you're working on a single-page web app or a complex web-based system, PandaEvents has the features you need to build robust and responsive event-driven applications. PandaEvents can be used with TypeScript aswell significantly.
 
-PandaEvents is a versatile and lightweight JavaScript library that simplifies the process of building event-driven applications. It provides a comprehensive set of tools for handling asynchronous operations, creating custom events and listeners, and managing complex event flows. This library is specially designed for browser-based applications, but it can also be used in Node.js environments to enhance the event management of your application. With its intuitive API, PandaEvents makes it easy to create and manage events, allowing developers to focus on building the core functionality of their applications. Whether you're working on a single-page web app or a complex web-based system, PandaEvents has the features you need to build robust and responsive event-driven applications.
+#### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
+
+Let's first understand what an event listener does in a nutshell.
+
+Have you ever clicked a button and noticed that something happens as a result? That's what happens when we use event listeners in web development. An event listener is like a special function that detects for something to happen, like a button click. When the button is clicked, the event listener knows to run a specific function that was defined beforehand. This process allows us to make our web pages interactive and responsive to what the user does.
+
+Well, that's awesome. The browser gives us the capability to perform event-driven operations with DOM elements (i.e Buttons, Input boxes, Div, etc). But what about achieving the same thing without a DOM element? think of Node.JS where we don't have any DOM elements but still, we use it to make event-driven programs effectively, right? there is a built-in module available in Node.js called EventEmitter that allows to do such things and the PandaEvents is also created following the same concept to bring that awesomeness **with or without Node.js**. maybe in your **browser**.
+
+So, pandaEvents is a flexible solution that can be integrated into **any JavaScript or TypeScript application**, whether it uses **vanilla JavaScript** code or a modular system with multiple components like **Vue.js**, **React**, **React Native**, and even **Node.js** applications.
 
 #### Installation
 
@@ -63,10 +71,18 @@ const e= evants.pandaEvents();
 const e1= new evants.PandaEvents();
 ```
 
-#### Let's understand what's the role of an Event listener and how the PandaEvents gets into the picture.
+#### Creating an event listener
 
-Let's first understand what an event listener does in a nutshell.
+Before emitting any event, it's required to register the event name and the listener or the call-back function. Using a single PandaEvents instance you can register multiple events and for an event you may have more than one listener (callback)
 
-Have you ever clicked a button and noticed that something happens as a result? That's what happens when we use event listeners in web development. An event listener is like a special function that detects for something to happen, like a button click. When the button is clicked, the event listener knows to run a specific function that was defined beforehand. This process allows us to make our web pages interactive and responsive to what the user does.
+Note that, each time you register an listener, it gives an **Listener Id** which is very unique to the event and that listener. The Id can be used to keep track also to remove the listener
 
-Well, that's awesome. The browser gives us the capability to perform event-driven operations with DOM elements (i.e Buttons, Input boxes, Div, etc). But what about achieving the same thing without a DOM element? think of Node.JS where we don't have any DOM elements but still, we use it to make event-driven programs effectively, right? there is a built-in module available in Node.js called EventEmitter that allows to do such things and the PandaEvents is also created following the same concept to bring that awesomeness with or without Node.js. maybe in your browser.
+**Syantx**
+
+```
+e.on(event, listener)
+
+** We mentioned that once you registers a listener, it will give you an Listener ID, so you can surely assign that into a variable as it's written below.
+
+const listenerId= e.on(event, listener)
+```
