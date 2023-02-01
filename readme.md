@@ -6,7 +6,7 @@ PandaEvents is a versatile and lightweight JavaScript library that simplifies th
 
 #### Installation
 
-PandaEvents can be installed easily as a package through NPM or Yarn, and also can be used in your web application through CDN (ESM is also available through CDN)
+PandaEvents can be installed easily as a package through **NPM** or **Yarn**, and also can be used in your web application through **CDN** (ESM is also available through CDN)
 
 **NPM or Yarn**
 
@@ -36,7 +36,7 @@ Let's see how we can use them programatically.
 //Imporing the pandaEvents method
 import {pandaEvents} from "[package]";
 
-//Getting instance of the emitter
+//Getting instance of the emitter through the pandaEvents() method
 const e= pandaEvents();
 ```
 
@@ -62,3 +62,11 @@ const e= evants.pandaEvents();
 //or, we can create instance of the class
 const e1= new evants.PandaEvents();
 ```
+
+#### Let's understand what's the role of an Event listener and how the PandaEvents gets into the picture.
+
+Let's first understand what an event listener does in a nutshell.
+
+Have you ever clicked a button and noticed that something happens as a result? That's what happens when we use event listeners in web development. An event listener is like a special function that detects for something to happen, like a button click. When the button is clicked, the event listener knows to run a specific function that was defined beforehand. This process allows us to make our web pages interactive and responsive to what the user does.
+
+Well, that's awesome. The browser gives us the capability to perform event-driven operations with DOM elements (i.e Buttons, Input boxes, Div, etc). But what about achieving the same thing without a DOM element? think of Node.JS where we don't have any DOM elements but still, we use it to make event-driven programs effectively, right? there is a built-in module available in Node.js called EventEmitter that allows to do such things and the PandaEvents is also created following the same concept to bring that awesomeness with or without Node.js. maybe in your browser.
