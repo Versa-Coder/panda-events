@@ -1,6 +1,6 @@
 ## PandaEvents 🐼
 
-PandaEvents is a versatile and lightweight JavaScript library which is also compatible with TypeScript that simplifies the process of building event-driven applications. It provides a comprehensive set of tools for handling asynchronous operations, creating custom events and listeners, and managing complex event flows. This library is specially designed for browser-based applications, but it can also be used in Node.js environments to enhance the event management of your application. With its intuitive API, PandaEvents makes it easy to create and manage events, allowing developers to focus on building the core functionality of their applications. Whether you're working on a single-page web app or a complex web-based system, PandaEvents has the features you need to build robust and responsive event-driven applications. PandaEvents can be used with TypeScript aswell significantly.
+PandaEvents is a JavaScript library compatible with TypeScript, simplifying event-driven app building. It provides tools for async operations, custom events, and complex event flows. Designed for browser-based apps but also usable in Node.js, it has an intuitive API for easy event creation and management.
 
 #### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
 
@@ -112,7 +112,7 @@ e.on('myEvent', (msg) => {
 e.emit('myEvent', "Hello panda 🐼");
 ```
 
-##### Output
+Output
 
 ```
 Hello panda 🐼
