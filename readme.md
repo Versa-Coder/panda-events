@@ -249,4 +249,63 @@ PandaEvents handles async handlers or callbacks just like regular functions and 
 e.on(eventName, async function(){ /*Code here*/ })
 ```
 
+#### Handling the scope of the events and listener's storage
+
+By default it does not matter as many instance you created through `pandaEvents()` method or `new PandaEvents()` by default they use to share the **global storage**, i.e each of them having access to others. you can stop them and limit it to instance only by providing an argument `{global: false}`
+
+Let's understand with an **example** of **global storage**
+
+```
+// Creating three different instance of the event emitter
+const e1= pandaEvents();
+const e2= new PandaEvents();
+const e3= events.pandaEvents();
+
+// Assigning an event and and listener at e1
+e1.on("test", (from)=>{ console.log("I am getting triggered from", from) });
+
+// Now lets trigger event from all those three instances
+e1.emit("test", "e1");
+e2.emit("test", "e2");
+e3emit("test", "e3");
+
+```
+
+**Output**
+
+```
+I am getting triggered from e1
+I am getting triggered from e2
+I am getting triggered from e3
+```
+
+Now, lets take an **example** by limiting the storage only into the instance
+
+```
+// Creating three different instance of the event emitter
+const e1= pandaEvents({global: false});
+const e2= new PandaEvents({global: false});
+const e3= events.pandaEvents();
+
+// Assigning an event and and listener at e3
+e3.on("test", (from)=>{ console.log("I am getting triggered from", from) });
+
+// Now lets trigger event from all those three instances
+e1.emit("test", "e1");
+e2.emit("test", "e2");
+e3emit("test", "e3");
+```
+
+**Output**
+
+```
+I am getting triggered from e3
+```
+
+So, `e1` and `e2` has no global storage access as we creted the instances with `{global:false}` so the event `test` and corresponding listener is unknown to them and only working while we emitting through `e3`, all though if we create another instance with global access i.e`{global: true}` or with a `blank` argument that will use the global storage and the event test would known to them.
+
+Here we can create event and listener for `e1` and `e2` and they will limited to them only.
+
 #### Default events
+
+PandaEvents provides some default events for each instance
