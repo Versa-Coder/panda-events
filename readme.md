@@ -1,6 +1,6 @@
 ## PandaEvents 🐼
 
-PandaEvents is a JavaScript library compatible with TypeScript, simplifying event-driven app building. It provides tools for async operations, custom events, and complex event flows. Designed for browser-based apps but also usable in Node.js, it has an intuitive API for easy event creation and management.
+PandaEvents is a lite weight JavaScript library compatible with TypeScript, simplifying event-driven app building. It provides tools for async operations, custom events, and complex event flows. Designed for browser-based apps but also usable in Node.js, it has an intuitive API for easy event creation and management.
 
 #### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
 
@@ -75,7 +75,7 @@ const e1= new evants.PandaEvents();
 
 Before emitting any event, it's required to register the event name and the listener or the call-back function. Using a single PandaEvents instance you can register multiple events and for an event you may have more than one listener (callback)
 
-Note that, each time you register an listener, it gives an **Listener Id** which is very unique to the event and that listener. The Id can be used to keep track also to remove the listener
+**Note that**, each time you register an listener, it gives an **Listener Id** which is very unique to the event and that listener. The Id can be used to keep track also to remove the listener
 
 **Syantx**
 
@@ -117,3 +117,136 @@ Output
 ```
 Hello panda 🐼
 ```
+
+**Note that**, listener for an event should be initiated before emitting the event, otherwise they will not be listining.
+
+#### Removing listener
+
+There is a couple of approaches available to remove an event, pick any of them that suits your requirements.
+
+`removeEventListener(event, listener)` - Allows to remove a specific listener for the given event name.
+
+**Example**
+
+```
+// Defining our listeners or the call back function
+function firstCallBack(){ console.log("Log from firstCallBack"); }
+function secondCallBack(){ console.log("Log from secondCallBack") }
+
+//Creating an event and assigning the listners/call-backs difined above to it
+e.on("test", firstCallBack);
+e.on("test", secondCallBack);
+
+// Removing the first listener
+e.removeEventListener("test", firstCallBack);
+
+// Let's try emitting the event now
+e.emit("test");
+```
+
+Output
+
+```
+Log from secondCallBack
+```
+
+Explanation: As we removed the listener `firstCallBack` at third step for the event `test`. So, after emitting the event only the `secondCallBack` was executed.
+
+`off(event, listener)` - This works the same as `removeEventListener(event, listener)` that we explained above, the name was just shortened for coolness.
+
+**Note that**, In order to remove a listener using `removeEventListener` or `off` you need to define your listener(s) or the call-back(s) separately to refer to the same listener while removing. Notice the example for `removeEventListener` to see how we defined `first callback` and `secondCallBack` separately and used.
+
+`removeAllEventListeners(event)` - Removes all the listeners for the given event name.
+
+If you know Node.js EventEmitter most probably you can relate all the methods given above. Here PandaEvents provides some more methods to delete.
+
+`removeListenerById(listenerId)` - As we already explained, whenever we create listener for an event it returns a unique listener id, using the `removeListenerById()` we can remove a listener based on the event id.
+
+Example
+
+```
+//Initiate an event and the listener
+const listenerId= e.on("test", ()=>{ console.log("Hello test") });
+
+//Removing the listener by the listener id
+e.removeListenerById(listenerId);
+```
+
+`removeAllListenersById(listenerId | [listenerId1, listenerId2, ...])` - Just like `removeListenerById` it also removes the listener for given listener id, alternatively we can pass an array of listener ids, that we want to delete together;
+
+**Note that**, during removal of an listener, PandaEvents use to trigger an event named `removeListener`. A listener function can be attached to it in order to receive informtions like eventName and the removedListener and to process as we want.
+
+**Syntax**
+
+```
+e.on('removeListener', (event, removedListener)=>{ /*Code here*/ })
+```
+
+We can modify the default event removal handler name `removeListener` using the name modifier `removeListenerEventName`
+
+**Syntax and Example**
+
+```
+// Modifying error removal handling event name
+e.removeListenerEventName= "evtRemoved";
+
+// Now we can write our detection handler like this.
+e.on("evtRemoved", (event, removedListener)=>{ /*Code here*/ });
+```
+
+#### Handling errors
+
+PandaEvents has one default event called `error` to hanle errors. Even if we are not handling errors in our given listener function or the callback, it does the job for us.
+
+Syntax
+
+```
+e.on("error", (error, event)=>{ /* Your code here */ })
+```
+
+Example
+
+```
+// Registration of the listener to the event 'error' to handle errors
+e.on('error', (error, event)=>{
+  console.log("Error appeared for -", event);
+  console.log("Error is -", error)
+})
+
+// Registration for our event and listner where an error will be triggered
+e.on("testEvent", ()=>{ throw new Error("It's an error.") });
+
+// Triggering the event
+e.emit("test")
+```
+
+**Output**
+
+```
+Error appeared for - testEvent
+Error is - Error: It's an error
+```
+
+**Note that**, we can modify default error handler event name `error`, there is a name modifier `errorEventName` available for that.
+
+**Syntax & Example**
+
+```
+// Modification of default error handler event name from "error" to "anyError"
+e.errorEventName= "anyError";
+
+//Now we can write our error handler like this
+e.on("anyError", (error, event)=>{ /* Code here */ });
+```
+
+#### Handling asynchronus operations
+
+PandaEvents handles async handlers or callbacks just like regular functions and maintains all the flows and works with error handler just like a regular function, there no special setup required for that
+
+**Syntax**
+
+```
+e.on(eventName, async function(){ /*Code here*/ })
+```
+
+#### Default events
