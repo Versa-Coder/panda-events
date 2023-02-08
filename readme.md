@@ -43,7 +43,6 @@ Let's see how we can use them programatically.
 ```
 //Imporing the pandaEvents method
 import {pandaEvents} from "[package]";
-
 //Getting instance of the emitter through the pandaEvents() method
 const e= pandaEvents();
 ```
@@ -53,7 +52,6 @@ Or
 ```
 //Importing the PandaEvents class
 import {PandaEvents} from "[package]";
-
 //Creating instance
 const e= new PandaEvents();
 ```
@@ -63,10 +61,8 @@ Or
 ```
 //Imporing the default exported object which contains both the method and the class
 import events from "[package]"
-
 //we either call the method in the way written below
 const e= evants.pandaEvents();
-
 //or, we can create instance of the class
 const e1= new evants.PandaEvents();
 ```
@@ -81,10 +77,8 @@ Before emitting any event, it's required to register the event name and the list
 
 ```
 e.on(event, listener);
-
 ** We mentioned that once you registers a listener, it will give you an Listener ID.
 ** So, you can surely assign that into a variable as it's written below.
-
 const listenerId= e.on(event, listener);
 ```
 
@@ -102,12 +96,10 @@ e.emit(event, arg1, arg2, ...);
 
 ```
 const e = pandaEvents()
-
 // Registering to myEvent
 e.on('myEvent', (msg) => {
    console.log(msg);
 });
-
 // Triggering myEvent
 e.emit('myEvent', "Hello panda 🐼");
 ```
@@ -118,7 +110,7 @@ Output
 Hello panda 🐼
 ```
 
-**Note that**, listener for an event should be initiated before emitting the event, otherwise they will not be listining.
+**Note that**, the listener for an event should be initiated before emitting the event, otherwise they will not be listening.
 
 #### Removing listener
 
@@ -132,14 +124,11 @@ There is a couple of approaches available to remove an event, pick any of them t
 // Defining our listeners or the call back function
 function firstCallBack(){ console.log("Log from firstCallBack"); }
 function secondCallBack(){ console.log("Log from secondCallBack") }
-
 //Creating an event and assigning the listners/call-backs difined above to it
 e.on("test", firstCallBack);
 e.on("test", secondCallBack);
-
 // Removing the first listener
 e.removeEventListener("test", firstCallBack);
-
 // Let's try emitting the event now
 e.emit("test");
 ```
@@ -167,32 +156,11 @@ Example
 ```
 //Initiate an event and the listener
 const listenerId= e.on("test", ()=>{ console.log("Hello test") });
-
 //Removing the listener by the listener id
 e.removeListenerById(listenerId);
 ```
 
 `removeAllListenersById(listenerId | [listenerId1, listenerId2, ...])` - Just like `removeListenerById` it also removes the listener for given listener id, alternatively we can pass an array of listener ids, that we want to delete together;
-
-**Note that**, during removal of an listener, PandaEvents use to trigger an event named `removeListener`. A listener function can be attached to it in order to receive informtions like eventName and the removedListener and to process as we want.
-
-**Syntax**
-
-```
-e.on('removeListener', (event, removedListener)=>{ /*Code here*/ })
-```
-
-We can modify the default event removal handler name `removeListener` using the name modifier `removeListenerEventName`
-
-**Syntax and Example**
-
-```
-// Modifying error removal handling event name
-e.removeListenerEventName= "evtRemoved";
-
-// Now we can write our detection handler like this.
-e.on("evtRemoved", (event, removedListener)=>{ /*Code here*/ });
-```
 
 #### Handling errors
 
@@ -212,10 +180,8 @@ e.on('error', (error, event)=>{
   console.log("Error appeared for -", event);
   console.log("Error is -", error)
 })
-
 // Registration for our event and listner where an error will be triggered
 e.on("testEvent", ()=>{ throw new Error("It's an error.") });
-
 // Triggering the event
 e.emit("test")
 ```
@@ -234,7 +200,6 @@ Error is - Error: It's an error
 ```
 // Modification of default error handler event name from "error" to "anyError"
 e.errorEventName= "anyError";
-
 //Now we can write our error handler like this
 e.on("anyError", (error, event)=>{ /* Code here */ });
 ```
@@ -260,15 +225,12 @@ Let's understand with an **example** of **global storage**
 const e1= pandaEvents();
 const e2= new PandaEvents();
 const e3= events.pandaEvents();
-
 // Assigning an event and and listener at e1
 e1.on("test", (from)=>{ console.log("I am getting triggered from", from) });
-
 // Now lets trigger event from all those three instances
 e1.emit("test", "e1");
 e2.emit("test", "e2");
 e3emit("test", "e3");
-
 ```
 
 **Output**
@@ -286,10 +248,8 @@ Now, lets take an **example** by limiting the storage only into the instance
 const e1= pandaEvents({global: false});
 const e2= new PandaEvents({global: false});
 const e3= events.pandaEvents();
-
 // Assigning an event and and listener at e3
 e3.on("test", (from)=>{ console.log("I am getting triggered from", from) });
-
 // Now lets trigger event from all those three instances
 e1.emit("test", "e1");
 e2.emit("test", "e2");
@@ -308,4 +268,66 @@ Here we can create event and listener for `e1` and `e2` and they will limited to
 
 #### Default events
 
-PandaEvents provides some default events for each instance
+PandaEvents provides some default events for each instance, they use to get triggered automatically when you create a listener or remove a listener and if an unhandled error occurs.
+
+**`newListener`** - each time you registers an listener, each instance of PandaEvents use to trigger another event named `newListener`. A listener function can be attached to it in order to receive informtions like eventName and the callBack function and to process as we want
+
+**Syntax**
+
+```
+e.on("newListener", (eventName, callBack)=>{ /* Your code here*/ })
+```
+
+You can modify the listener name `newListener` if you want. there is a property `newListenerEventName` which can be used to modify the name.
+
+**Example**
+
+```
+// Modifying new listeener hadling event name
+const e.newListenerEventName= "listenerCreated";
+
+//Now we can write the detection handler like this
+e.on("listenerCreated", (event, callBack)=>{ /* Code here */ })
+```
+
+**`removeListener`** - during removal of an listener, PandaEvents use to trigger an event named `removeListener`. A listener function can be attached to it in order to receive informtions like eventName and the removedListener and to process as we want.
+
+**Syntax**
+
+```
+e.on('removeListener', (event, removedListener)=>{ /*Code here*/ })
+```
+
+We can modify the default event removal handler name `removeListener` using the name modifier `removeListenerEventName`
+
+**Syntax and Example**
+
+```
+// Modifying error removal handling event name
+e.removeListenerEventName= "evtRemoved";
+
+// Now we can write our detection handler like this.
+e.on("evtRemoved", (event, removedListener)=>{ /*Code here*/ });
+```
+
+**`error`** - We refer to look at the [Handling Errors](#handling-errors) section to understand this event better.
+
+#### Extending the PandaEvents class
+
+The class `PandasEvents` can be inherited to create a custom event emitter or to limit the accessibility of the event handler throughout the class only or through its instances.
+
+**Note that**, only extending the class will cause using the global event handler storage. To limit the storage access only to it's instances, consider passing `{global: false}` to the parent class (i.e PandaEvents) constructor.
+
+**Example**
+
+```
+Class App extends PandaEvents{
+   constructor(){
+      super({global: false}); // Limitting the event listener storage to this class only
+   }
+   listen(){
+    // An example method, where we can access all the panda events method with `this` keyword
+    this.on("test", ()=>{ /* Do something */ })
+   }
+}
+```

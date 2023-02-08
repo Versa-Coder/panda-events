@@ -105,7 +105,7 @@ export class PandaEvents {
         this.#removeListenerEventName,
       ].includes(eventName)
     ) {
-      this.emit("newListener", eventName, callBack);
+      this.emit(this.#newListenerEventName, eventName, callBack);
     }
     return evtListener;
   }
