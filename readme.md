@@ -1,8 +1,8 @@
-## PandaEvents 🐼
+# PandaEvents 🐼
 
 PandaEvents is a lite weight JavaScript library compatible with TypeScript, simplifying event-driven app building. It provides tools for async operations, custom events, and complex event flows. Designed for browser-based apps but also usable in Node.js, it has an intuitive API for easy event creation and management.
 
-#### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
+### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
 
 Let's first understand what an event listener does in a nutshell.
 
@@ -12,7 +12,7 @@ Well, that's awesome. The browser gives us the capability to perform event-drive
 
 So, pandaEvents is a flexible solution that can be integrated into **any JavaScript or TypeScript application**, whether it uses **vanilla JavaScript** code or a modular system with multiple components like **Vue.js**, **React**, **React Native**, and even **Node.js** applications.
 
-#### Installation
+### Installation
 
 PandaEvents can be installed easily as a package through **NPM** or **Yarn**, and also can be used in your web application through **CDN** (ESM is also available through CDN)
 
@@ -32,7 +32,7 @@ yarn add [package]
 
 [link](https://)
 
-#### Getting started
+### Getting started
 
 Earlier, we studied how to install the library. Now, let's learn how to access the Event object or the core event emitter class in the PandaEvents library.
 
@@ -67,7 +67,7 @@ const e= evants.pandaEvents();
 const e1= new evants.PandaEvents();
 ```
 
-#### Creating an event listener
+### Creating an event listener
 
 Before emitting any event, it's required to register the event name and the listener or the call-back function. Using a single PandaEvents instance you can register multiple events and for an event you may have more than one listener (callback)
 
@@ -82,7 +82,7 @@ e.on(event, listener);
 const listenerId= e.on(event, listener);
 ```
 
-#### Emitting an event
+### Emitting an event
 
 The `emit()` method is used to trigger an event by providing an event name which is registered and any necessary arguments, `emit()`activates any listeners or callbacks that have been registered for that event. These listeners will then receive the arguments passed through`emit()`, allowing them to perform the desired action.
 
@@ -92,7 +92,7 @@ The `emit()` method is used to trigger an event by providing an event name which
 e.emit(event, arg1, arg2, ...);
 ```
 
-#### Example
+### Example
 
 ```
 const e = pandaEvents()
@@ -112,7 +112,7 @@ Hello panda 🐼
 
 **Note that**, the listener for an event should be initiated before emitting the event, otherwise they will not be listening.
 
-#### Removing listener
+### Removing listener
 
 There is a couple of approaches available to remove an event, pick any of them that suits your requirements.
 
@@ -162,7 +162,7 @@ e.removeListenerById(listenerId);
 
 `removeAllListenersById(listenerId | [listenerId1, listenerId2, ...])` - Just like `removeListenerById` it also removes the listener for given listener id, alternatively we can pass an array of listener ids, that we want to delete together;
 
-#### Handling errors
+### Handling errors
 
 PandaEvents has one default event called `error` to hanle errors. Even if we are not handling errors in our given listener function or the callback, it does the job for us.
 
@@ -204,7 +204,7 @@ e.errorEventName= "anyError";
 e.on("anyError", (error, event)=>{ /* Code here */ });
 ```
 
-#### Handling asynchronus operations
+### Handling asynchronus operations
 
 PandaEvents handles async handlers or callbacks just like regular functions and maintains all the flows and works with error handler just like a regular function, there no special setup required for that
 
@@ -214,7 +214,7 @@ PandaEvents handles async handlers or callbacks just like regular functions and 
 e.on(eventName, async function(){ /*Code here*/ })
 ```
 
-#### Handling the scope of the events and listener's storage
+### Handling the scope of the events and listener's storage
 
 By default it does not matter as many instance you created through `pandaEvents()` method or `new PandaEvents()` by default they use to share the **global storage**, i.e each of them having access to others. you can stop them and limit it to instance only by providing an argument `{global: false}`
 
@@ -266,7 +266,7 @@ So, `e1` and `e2` has no global storage access as we creted the instances with `
 
 Here we can create event and listener for `e1` and `e2` and they will limited to them only.
 
-#### Default events
+### Default events
 
 PandaEvents provides some default events for each instance, they use to get triggered automatically when you create a listener or remove a listener and if an unhandled error occurs.
 
@@ -312,7 +312,7 @@ e.on("evtRemoved", (event, removedListener)=>{ /*Code here*/ });
 
 **`error`** - We refer to look at the [Handling Errors](#handling-errors) section to understand this event better.
 
-#### Extending the PandaEvents class
+### Extending the PandaEvents class
 
 The class `PandasEvents` can be inherited to create a custom event emitter or to limit the accessibility of the event handler throughout the class only or through its instances.
 
