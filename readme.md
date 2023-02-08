@@ -2,7 +2,7 @@
 
 PandaEvents is a lite weight JavaScript library compatible with TypeScript, simplifying event-driven app building. It provides tools for async operations, custom events, and complex event flows. Designed for browser-based apps but also usable in Node.js, it has an intuitive API for easy event creation and management.
 
-## Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
+### Let's understand what's the role of an Event listener and how the PandaEvents comes into the picture.
 
 Let's first understand what an event listener does in a nutshell.
 
@@ -92,7 +92,7 @@ The `emit()` method is used to trigger an event by providing an event name which
 e.emit(event, arg1, arg2, ...);
 ```
 
-## Example
+**Example**
 
 ```
 const e = pandaEvents()
