@@ -1,19 +1,27 @@
 {
-  "name": "pandaevents",
+  "name": "panda-events",
   "version": "1.0.1",
-  "description": "An customized event listener on browser or in Node js environment",
+  "description": "An customized event emitter for browser or in Node js environment",
   "main": "dist/index.js",
+  "types": "src/index.ts",
   "scripts": {
     "test": "jest --coverage",
     "watch": "tsc --watch",
-    "clear_test_cache": "jest --clearCache"
+    "clear_test_cache": "jest --clearCache",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Versa-Coder/PandaEvents.git"
   },
   "keywords": [
-    "events"
+    "events",
+    "event",
+    "listener",
+    "event listener",
+    "event emitter",
+    "eventemitter",
+    "browser"
   ],
   "author": "VersaCoder",
   "license": "ISC",
