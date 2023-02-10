@@ -19,7 +19,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _PandaEvents_instances, _PandaEvents_useGlobals, _PandaEvents_listeners, _PandaEvents_eventListenersMap, _PandaEvents_onceMap, _PandaEvents_errEventName, _PandaEvents_newListenerEventName, _PandaEvents_removeListenerEventName, _PandaEvents_execOnAndOnce;
-export var globalListenStorage = {
+const globalListenStorage = {
     listeners: [],
     eventListenersMap: {},
     onceMap: [],
@@ -31,7 +31,7 @@ export var globalListenStorage = {
  * @returns (Object) Event listener
  */
 export class PandaEvents {
-    constructor(options = {}) {
+    constructor(options = { global: true }) {
         _PandaEvents_instances.add(this);
         _PandaEvents_useGlobals.set(this, false);
         _PandaEvents_listeners.set(this, []);
@@ -73,7 +73,7 @@ export class PandaEvents {
      * @returns (String) Event Id
      */
     once(eventName, callBack) {
-        let id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, true);
+        const id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, true);
         return id;
     }
     /**
@@ -84,7 +84,7 @@ export class PandaEvents {
      * @returns (String) Event Id
      */
     on(eventName, callBack) {
-        let id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, false);
+        const id = __classPrivateFieldGet(this, _PandaEvents_instances, "m", _PandaEvents_execOnAndOnce).call(this, eventName, callBack, false);
         return id;
     }
     /**
@@ -94,11 +94,11 @@ export class PandaEvents {
      * @param args
      */
     emit(eventName, ...args) {
-        let evIds = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName];
+        const evIds = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName];
         if (evIds && Array.isArray(evIds)) {
-            let onceArr = [];
+            const onceArr = [];
             evIds.forEach((ev) => {
-                let fn = __classPrivateFieldGet(this, _PandaEvents_listeners, "f")[ev];
+                const fn = __classPrivateFieldGet(this, _PandaEvents_listeners, "f")[ev];
                 if (__classPrivateFieldGet(this, _PandaEvents_onceMap, "f").includes(ev)) {
                     onceArr.push(`${ev}@${eventName}`);
                 }
@@ -108,7 +108,7 @@ export class PandaEvents {
                             yield fn(...args);
                         }
                         catch (err) {
-                            let errListeners = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[__classPrivateFieldGet(this, _PandaEvents_errEventName, "f")];
+                            const errListeners = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[__classPrivateFieldGet(this, _PandaEvents_errEventName, "f")];
                             if (Array.isArray(errListeners) && errListeners.length > 0) {
                                 this.emit(__classPrivateFieldGet(this, _PandaEvents_errEventName, "f"), err, eventName);
                             }
@@ -137,7 +137,7 @@ export class PandaEvents {
      * @param Array listenerID or Array of Listener Ids
      */
     removeAllListenersById(listenerID) {
-        let ids = Array.isArray(listenerID) ? listenerID : [listenerID];
+        const ids = Array.isArray(listenerID) ? listenerID : [listenerID];
         ids.forEach((id) => {
             const [listenerIndexStr, ...eventNameArr] = id.split("@");
             const listenerIndex = Number(listenerIndexStr);
@@ -177,7 +177,7 @@ export class PandaEvents {
     removeEventListener(eventName, listener) {
         const index = __classPrivateFieldGet(this, _PandaEvents_listeners, "f").indexOf(listener);
         if (index !== -1) {
-            let evtName = `${index}@${eventName}`;
+            const evtName = `${index}@${eventName}`;
             this.removeListenerById(evtName);
         }
     }
@@ -187,9 +187,9 @@ export class PandaEvents {
      * @param eventName
      */
     removeAllEventListeners(eventName) {
-        let evtIds = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName];
+        const evtIds = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName];
         if (evtIds && Array.isArray(evtIds)) {
-            let handlers = evtIds.map((id) => `${id}@${eventName}`);
+            const handlers = evtIds.map((id) => `${id}@${eventName}`);
             this.removeAllListenersById(handlers);
         }
     }
@@ -202,12 +202,12 @@ _PandaEvents_useGlobals = new WeakMap(), _PandaEvents_listeners = new WeakMap(),
     else if (typeof callBack !== "function") {
         throw new Error(`callBack should be a function, "${typeof callBack}" given`);
     }
-    let cbs = (_a = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName]) !== null && _a !== void 0 ? _a : [];
-    let length = __classPrivateFieldGet(this, _PandaEvents_listeners, "f").push(callBack);
-    let listenerID = length - 1;
+    const cbs = (_a = __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName]) !== null && _a !== void 0 ? _a : [];
+    const length = __classPrivateFieldGet(this, _PandaEvents_listeners, "f").push(callBack);
+    const listenerID = length - 1;
     cbs.push(listenerID);
     __classPrivateFieldGet(this, _PandaEvents_eventListenersMap, "f")[eventName] = cbs;
-    let evtListener = `${listenerID}@${eventName}`;
+    const evtListener = `${listenerID}@${eventName}`;
     if (once) {
         __classPrivateFieldGet(this, _PandaEvents_onceMap, "f").push(listenerID);
     }
@@ -216,7 +216,7 @@ _PandaEvents_useGlobals = new WeakMap(), _PandaEvents_listeners = new WeakMap(),
         __classPrivateFieldGet(this, _PandaEvents_errEventName, "f"),
         __classPrivateFieldGet(this, _PandaEvents_removeListenerEventName, "f"),
     ].includes(eventName)) {
-        this.emit("newListener", eventName, callBack);
+        this.emit(__classPrivateFieldGet(this, _PandaEvents_newListenerEventName, "f"), eventName, callBack);
     }
     return evtListener;
 };

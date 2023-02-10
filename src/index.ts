@@ -2,13 +2,16 @@ type EventName = string | "newListener" | "error";
 type ListenerID = string;
 type EventListenersMap = { [name: string]: number[] };
 type EventOptions = { global?: boolean };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type CallBack = (...args: any) => any;
+
 type GlobalListenStorage = {
-  listeners: (Function | null)[];
+  listeners: (CallBack | null)[];
   eventListenersMap: EventListenersMap;
   onceMap: number[];
 };
 
-export var globalListenStorage: GlobalListenStorage = {
+const globalListenStorage: GlobalListenStorage = {
   listeners: [],
   eventListenersMap: {},
   onceMap: [],
@@ -21,14 +24,14 @@ export var globalListenStorage: GlobalListenStorage = {
  * @returns (Object) Event listener
  */
 export class PandaEvents {
-  #useGlobals: boolean = false;
-  #listeners: (Function | null)[] = [];
+  #useGlobals = false;
+  #listeners: (CallBack | null)[] = [];
   #eventListenersMap: EventListenersMap = {};
   #onceMap: number[] = [];
 
-  #errEventName: string = "error";
-  #newListenerEventName: string = "newListener";
-  #removeListenerEventName: string = "removeListener";
+  #errEventName = "error";
+  #newListenerEventName = "newListener";
+  #removeListenerEventName = "removeListener";
 
   constructor(options: EventOptions = { global: true }) {
     this.#useGlobals = options.global ? true : false;
@@ -73,8 +76,8 @@ export class PandaEvents {
    */
   #execOnAndOnce(
     eventName: EventName,
-    callBack: Function,
-    once: boolean = false
+    callBack: CallBack,
+    once = false
   ): ListenerID {
     if (typeof eventName !== "string") {
       throw new Error(
@@ -86,13 +89,14 @@ export class PandaEvents {
       );
     }
 
-    let cbs = this.#eventListenersMap[eventName] ?? [];
-    let length = this.#listeners.push(callBack);
-    let listenerID = length - 1;
+    const cbs = this.#eventListenersMap[eventName] ?? [];
+    const length = this.#listeners.push(callBack);
+    const listenerID = length - 1;
+
     cbs.push(listenerID);
     this.#eventListenersMap[eventName] = cbs;
 
-    let evtListener = `${listenerID}@${eventName}`;
+    const evtListener = `${listenerID}@${eventName}`;
 
     if (once) {
       this.#onceMap.push(listenerID);
@@ -117,8 +121,8 @@ export class PandaEvents {
    * @param callBack
    * @returns (String) Event Id
    */
-  once(eventName: EventName, callBack: Function): ListenerID {
-    let id = this.#execOnAndOnce(eventName, callBack, true);
+  once(eventName: EventName, callBack: CallBack): ListenerID {
+    const id = this.#execOnAndOnce(eventName, callBack, true);
     return id;
   }
 
@@ -129,8 +133,8 @@ export class PandaEvents {
    * @param callBack
    * @returns (String) Event Id
    */
-  on(eventName: EventName, callBack: Function): ListenerID {
-    let id = this.#execOnAndOnce(eventName, callBack, false);
+  on(eventName: EventName, callBack: CallBack): ListenerID {
+    const id = this.#execOnAndOnce(eventName, callBack, false);
     return id;
   }
 
@@ -141,11 +145,11 @@ export class PandaEvents {
    * @param args
    */
   emit(eventName: string, ...args: unknown[]): void {
-    let evIds = this.#eventListenersMap[eventName];
+    const evIds = this.#eventListenersMap[eventName];
     if (evIds && Array.isArray(evIds)) {
-      let onceArr: ListenerID[] = [];
+      const onceArr: ListenerID[] = [];
       evIds.forEach((ev) => {
-        let fn = this.#listeners[ev] as Function;
+        const fn = this.#listeners[ev] as CallBack;
         if (this.#onceMap.includes(ev)) {
           onceArr.push(`${ev}@${eventName}`);
         }
@@ -155,7 +159,7 @@ export class PandaEvents {
             try {
               await fn(...args);
             } catch (err) {
-              let errListeners = this.#eventListenersMap[this.#errEventName];
+              const errListeners = this.#eventListenersMap[this.#errEventName];
               if (Array.isArray(errListeners) && errListeners.length > 0) {
                 this.emit(this.#errEventName, err, eventName);
               } else {
@@ -185,7 +189,7 @@ export class PandaEvents {
    * @param Array listenerID or Array of Listener Ids
    */
   removeAllListenersById(listenerID: ListenerID | ListenerID[]) {
-    let ids = Array.isArray(listenerID) ? listenerID : [listenerID];
+    const ids = Array.isArray(listenerID) ? listenerID : [listenerID];
     ids.forEach((id) => {
       const [listenerIndexStr, ...eventNameArr] = id.split("@");
       const listenerIndex = Number(listenerIndexStr);
@@ -199,7 +203,7 @@ export class PandaEvents {
           1
         );
 
-      let removedListener: null | Function = null;
+      let removedListener: null | CallBack = null;
 
       if (this.#listeners[listenerIndex]) {
         removedListener = this.#listeners[listenerIndex];
@@ -222,7 +226,7 @@ export class PandaEvents {
    * @param listener
    * @returns
    */
-  off(eventName: EventName, listener: Function) {
+  off(eventName: EventName, listener: CallBack) {
     return this.removeEventListener(eventName, listener);
   }
 
@@ -232,10 +236,10 @@ export class PandaEvents {
    * @param eventName
    * @param listener
    */
-  removeEventListener(eventName: EventName, listener: Function) {
+  removeEventListener(eventName: EventName, listener: CallBack) {
     const index = this.#listeners.indexOf(listener);
     if (index !== -1) {
-      let evtName = `${index}@${eventName}`;
+      const evtName = `${index}@${eventName}`;
       this.removeListenerById(evtName);
     }
   }
@@ -246,9 +250,9 @@ export class PandaEvents {
    * @param eventName
    */
   removeAllEventListeners(eventName: string): void {
-    let evtIds = this.#eventListenersMap[eventName];
+    const evtIds = this.#eventListenersMap[eventName];
     if (evtIds && Array.isArray(evtIds)) {
-      let handlers = evtIds.map((id) => `${id}@${eventName}`);
+      const handlers = evtIds.map((id) => `${id}@${eventName}`);
       this.removeAllListenersById(handlers);
     }
   }
