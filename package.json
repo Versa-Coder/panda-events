@@ -1,9 +1,9 @@
 {
   "name": "panda-events",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "An customized event emitter for browser or in Node js environment",
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest --coverage",
     "watch": "tsc --watch",
@@ -21,7 +21,12 @@
     "event listener",
     "event emitter",
     "eventemitter",
-    "browser"
+    "browser",
+    "trigger",
+    "observer",
+    "listener",
+    "emitter",
+    "pubsub"
   ],
   "author": "VersaCoder",
   "license": "ISC",

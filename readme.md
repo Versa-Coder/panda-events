@@ -18,11 +18,11 @@ PandaEvents can be installed easily as a package through **NPM** or **Yarn**, an
 
 **NPM or Yarn**
 
-npm install [package]
+npm install panda-events
 
 or
 
-yarn add [package]
+yarn add panda-events
 
 **CDN**
 
@@ -42,7 +42,7 @@ Let's see how we can use them programatically.
 
 ```
 //Imporing the pandaEvents method
-import {pandaEvents} from "[package]";
+import {pandaEvents} from "panda-events";
 //Getting instance of the emitter through the pandaEvents() method
 const e= pandaEvents();
 ```
@@ -51,7 +51,7 @@ Or
 
 ```
 //Importing the PandaEvents class
-import {PandaEvents} from "[package]";
+import {PandaEvents} from "panda-events";
 //Creating instance
 const e= new PandaEvents();
 ```
@@ -60,7 +60,7 @@ Or
 
 ```
 //Imporing the default exported object which contains both the method and the class
-import events from "[package]"
+import events from "panda-events"
 //we either call the method in the way written below
 const e= evants.pandaEvents();
 //or, we can create instance of the class
