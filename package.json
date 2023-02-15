@@ -1,7 +1,7 @@
 {
   "name": "panda-events",
-  "version": "1.0.5",
-  "description": "An customized event emitter for browser or in Node js environment",
+  "version": "1.0.9",
+  "description": "A customized event emitter for browser or in Node js environment",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
