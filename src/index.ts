@@ -262,5 +262,7 @@ export function pandaEvents(options: EventOptions = {}): PandaEvents {
   return new PandaEvents(options);
 }
 
+//#CDN_REMOVE
 const events = { PandaEvents, pandaEvents };
 export default events;
+//##CDN_REMOVE
