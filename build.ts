@@ -1,4 +1,4 @@
-import { readFileSync, renameSync, unlink } from "fs";
+import { readFileSync, renameSync, writeFileSync, unlinkSync } from "fs";
 import path from "path";
 import { exec, ExecException } from "child_process";
 
@@ -9,15 +9,15 @@ import { exec, ExecException } from "child_process";
 
   const name = "panda-events";
 
-  const cdnName = `${name}.js`;
-  const cdnMinName = `${name}.min.js`;
-
   const baseDir = __dirname;
   const sourceDir = path.join(baseDir, "src");
   const sourceFile = path.join(sourceDir, "index.ts");
   const tempSourceFile = path.join(sourceDir, "index.temp.ts");
 
   const cdnPath = path.join(baseDir, "dist/cdn");
+  const cdnTempDestinFile = path.join(baseDir, "dist/cdn/index.temp.js");
+  const cdnName = path.join(cdnPath, `${name}.js`);
+  const cdnMinName = path.join(cdnPath, `${name}.min.js`);
 
   const esmPath = path.join(baseDir, "dist/esm");
   const esmName = path.join(esmPath, `${name}.esm.js`);
@@ -48,5 +48,10 @@ import { exec, ExecException } from "child_process";
 
   //Create CDN build
   let script = await readFileSync(sourceFile, "utf-8");
-  script = script.replace(cdnTagRemovalReg, "");
+  script = script.replace(cdnTagRemovalReg, "").replace(removExportRegex, "");
+  await writeFileSync(tempSourceFile, script);
+  await execShell(`tsc -p cdn-config`);
+  await unlinkSync(tempSourceFile);
+  await execShell(`minify ${cdnTempDestinFile} > ${cdnMinName}`);
+  await renameSync(cdnTempDestinFile, cdnName);
 })();
