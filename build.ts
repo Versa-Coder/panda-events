@@ -14,10 +14,10 @@ import { exec, ExecException } from "child_process";
   const sourceFile = path.join(sourceDir, "index.ts");
   const tempSourceFile = path.join(sourceDir, "index.temp.ts");
 
-  const cdnPath = path.join(baseDir, "dist/cdn");
-  const cdnTempDestinFile = path.join(baseDir, "dist/cdn/index.temp.js");
-  const cdnName = path.join(cdnPath, `${name}.js`);
-  const cdnMinName = path.join(cdnPath, `${name}.min.js`);
+  const plainPath = path.join(baseDir, "dist/plain");
+  const plainTempDestinFile = path.join(baseDir, "dist/plain/index.temp.js");
+  const plainName = path.join(plainPath, `${name}.js`);
+  const plainMinName = path.join(plainPath, `${name}.min.js`);
 
   const esmPath = path.join(baseDir, "dist/esm");
   const esmName = path.join(esmPath, `${name}.esm.js`);
@@ -46,12 +46,12 @@ import { exec, ExecException } from "child_process";
   await execShell(`minify ${esmSrcName} > ${esmMinName}`);
   await renameSync(esmSrcName, esmName);
 
-  //Create CDN build
+  //Create CDN Plain build
   let script = await readFileSync(sourceFile, "utf-8");
   script = script.replace(cdnTagRemovalReg, "").replace(removExportRegex, "");
   await writeFileSync(tempSourceFile, script);
   await execShell(`tsc -p cdn-config`);
   await unlinkSync(tempSourceFile);
-  await execShell(`minify ${cdnTempDestinFile} > ${cdnMinName}`);
-  await renameSync(cdnTempDestinFile, cdnName);
+  await execShell(`minify ${plainTempDestinFile} > ${plainMinName}`);
+  await renameSync(plainTempDestinFile, plainName);
 })();
