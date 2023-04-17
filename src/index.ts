@@ -258,7 +258,9 @@ export class PandaEvents {
   }
 }
 
-export function pandaEvents(options: EventOptions = {}): PandaEvents {
+export function pandaEvents(
+  options: EventOptions = { global: true }
+): PandaEvents {
   return new PandaEvents(options);
 }
 
