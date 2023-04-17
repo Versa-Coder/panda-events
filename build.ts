@@ -54,4 +54,13 @@ import { exec, ExecException } from "child_process";
   await unlinkSync(tempSourceFile);
   await execShell(`minify ${plainTempDestinFile} > ${plainMinName}`);
   await renameSync(plainTempDestinFile, plainName);
+
+  //Running
+  execShell(`yarn run test`)
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 })();

@@ -6,4 +6,5 @@ module.exports = {
     "^.+\\.ts?$": "ts-jest",
     "^.+\\.js?$": "babel-jest",
   },
+  modulePathIgnorePatterns: ["dist/plain", "dist/esm"],
 };
