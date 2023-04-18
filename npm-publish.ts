@@ -9,7 +9,9 @@ new (class {
 
   constructor() {
     this.replaceVersion()
-      .then(() => {})
+      .then(() => {
+        this.publish();
+      })
       .catch((err) => {
         console.error(err);
       });
