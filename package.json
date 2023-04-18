@@ -8,7 +8,8 @@
     "test": "jest --coverage",
     "watch": "tsc --watch",
     "clear_test_cache": "jest --clearCache",
-    "build": "ts-node build"
+    "build": "ts-node build",
+    "npm-publish": "ts-node npm-publish.ts"
   },
   "repository": {
     "type": "git",

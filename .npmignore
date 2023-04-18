@@ -8,5 +8,6 @@ build.ts
 babel.config.js
 jest.config.js
 tsconfig.json
+npm-publish.ts
 *.lock
 .eslintrc
