@@ -204,7 +204,7 @@ e.errorEventName= "anyError";
 e.on("anyError", (error, event)=>{ /* Code here */ });
 ```
 
-## Handling asynchronus operations
+## Handling asynchronous operations
 
 PandaEvents handles async handlers or callbacks just like regular functions and maintains all the flows and works with error handler just like a regular function, there no special setup required for that
 
