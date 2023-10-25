@@ -26,11 +26,11 @@ yarn add panda-events
 
 **CDN**
 
-[https://unpkg.com/panda-events@1.1.3/dist/plain/panda-events.min.js](https://unpkg.com/panda-events@1.1.3/dist/plain/panda-events.min.js)
+[https://unpkg.com/panda-events@latest/dist/plain/panda-events.min.js](https://unpkg.com/panda-events@latest/dist/plain/panda-events.min.js)
 
 (ESM)
 
-[https://unpkg.com/panda-events@1.1.3/dist/esm/panda-events.esm.min.js](https://unpkg.com/panda-events@1.1.3/dist/esm/panda-events.esm.min.js)
+[https://unpkg.com/panda-events@latest/dist/esm/panda-events.esm.min.js](https://unpkg.com/panda-events@latest/dist/esm/panda-events.esm.min.js)
 
 ## Getting started
 
